@@ -22,6 +22,7 @@ public class EmployeeService {
         Employee employee = new Employee();
         employee.setName(employeeDto.getName());
         employee.setEmail(employeeDto.getEmail());
+        employee.setCity(employeeDto.getCity());
         try {
             employee.setResume(employeeDto.getResume().getBytes());
             return employeeRepository.save(employee);
