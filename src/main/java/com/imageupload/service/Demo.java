@@ -4,8 +4,11 @@ import java.util.Random;
 
 public class Demo {
     public static void main(String[] args) {
-        String s = myMethod();
-        System.out.println(s);
+//        String s = myMethod();
+//        System.out.println(s);
+        Random random = new Random();
+        int randomNum = 1000 + random.nextInt(9000); // Generates a random number between 1000 and 9999
+        System.out.println(randomNum);
     }
 
     public static String myMethod() {
