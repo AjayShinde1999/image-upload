@@ -4,20 +4,22 @@ import com.imageupload.entity.Employee;
 import com.imageupload.payload.DeleteResponse;
 import com.imageupload.payload.EmployeeDto;
 import com.imageupload.repository.EmployeeRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class EmployeeService {
 
-    @Autowired
     private EmployeeRepository employeeRepository;
+
+    public EmployeeService(EmployeeRepository employeeRepository) {
+        this.employeeRepository = employeeRepository;
+    }
 
     public Employee saveEmployee(EmployeeDto employeeDto) {
         Employee employee = new Employee();
@@ -48,13 +50,17 @@ public class EmployeeService {
     }
 
     private String getFileExtension(String filename) {
-        if (StringUtils.hasText(filename)) {
-            int dotIndex = filename.lastIndexOf('.');
-            if (dotIndex >= 0 && dotIndex < filename.length() - 1) {
-                return filename.substring(dotIndex + 1);
-            }
-        }
-        return null;
+
+        int dotIndex = filename.lastIndexOf('.');
+        return filename.substring(dotIndex + 1);
+
+//        if (StringUtils.hasText(filename)) {
+//            int dotIndex = filename.lastIndexOf('.');
+//            if (dotIndex >= 0 && dotIndex < filename.length() - 1) {
+//                return filename.substring(dotIndex + 1);
+//            }
+//        }
+//        return null;
     }
 
     public DeleteResponse deleteEmployeeById(long id) {
@@ -62,5 +68,26 @@ public class EmployeeService {
         DeleteResponse response = new DeleteResponse();
         response.setMessage("Deleted Successfully");
         return response;
+    }
+
+    public Employee updateEmployeeById(EmployeeDto employeeDto, long id) {
+        Optional<Employee> optionalEmployee = employeeRepository.findById(id);
+        if (optionalEmployee.isPresent()) {
+            Employee employee = optionalEmployee.get();
+            employee.setName(employeeDto.getName());
+            employee.setEmail(employeeDto.getEmail());
+            employee.setCity(employeeDto.getCity());
+            try {
+                employee.setResume(employeeDto.getResume().getBytes());
+                employee.setFileName(employeeDto.getResume().getOriginalFilename());
+                String fileExtension = getFileExtension(employeeDto.getResume().getOriginalFilename());
+                employee.setExtension(fileExtension);
+               return employeeRepository.save(employee);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+        }
+        throw new RuntimeException("Employee not found with id " + id);
     }
 }
