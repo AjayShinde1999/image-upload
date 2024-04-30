@@ -1,6 +1,7 @@
 package com.imageupload.service;
 
 import com.imageupload.entity.Employee;
+import com.imageupload.payload.DeleteResponse;
 import com.imageupload.payload.EmployeeDto;
 import com.imageupload.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,7 @@ public class EmployeeService {
         String filename = employeeDto.getResume().getOriginalFilename();
         String fileExtension = getFileExtension(filename);
         employee.setFileName(filename);
+        System.out.println(filename);
         employee.setExtension(fileExtension);
         try {
             employee.setResume(employeeDto.getResume().getBytes());
@@ -40,7 +42,7 @@ public class EmployeeService {
     }
 
     public List<Employee> getAllEmployees(int pageNumber, int pageSize) {
-        PageRequest pageRequest = PageRequest.of(pageNumber-1, pageSize);
+        PageRequest pageRequest = PageRequest.of(pageNumber - 1, pageSize);
         Page<Employee> pageEmp = employeeRepository.findAll(pageRequest);
         return pageEmp.getContent();
     }
@@ -53,5 +55,12 @@ public class EmployeeService {
             }
         }
         return null;
+    }
+
+    public DeleteResponse deleteEmployeeById(long id) {
+        employeeRepository.deleteById(id);
+        DeleteResponse response = new DeleteResponse();
+        response.setMessage("Deleted Successfully");
+        return response;
     }
 }
