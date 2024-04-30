@@ -3,10 +3,13 @@ package com.imageupload.controller;
 import com.imageupload.entity.Employee;
 import com.imageupload.payload.EmployeeDto;
 import com.imageupload.service.EmployeeService;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @CrossOrigin("*")
@@ -37,5 +40,18 @@ public class EmployeeController {
                                                           @RequestParam(defaultValue = "10",required = false) int pageSize) {
         List<Employee> allEmployees = employeeService.getAllEmployees(pageNumber,pageSize);
         return ResponseEntity.ok(allEmployees);
+    }
+
+    @GetMapping("/{id}/file")
+    public ResponseEntity<byte[]> fileDownload(@PathVariable long id){
+        Employee employee = employeeService.getEmployeeById(id);
+
+        byte[] fileBytes = employee.getResume();
+        String fileExtension = employee.getExtension();
+        String fileName = employee.getFileName();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        headers.setContentDispositionFormData("attachment", fileName+"."+fileExtension); // Change "filename.xlsx" to your desired file name
+        return new ResponseEntity<>(fileBytes, headers, HttpStatus.OK);
     }
 }

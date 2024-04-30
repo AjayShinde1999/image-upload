@@ -13,5 +13,5 @@ public class Image {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private byte[] image;
-
+    private String extension;
 }

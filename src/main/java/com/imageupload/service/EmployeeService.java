@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.util.List;
@@ -22,6 +23,10 @@ public class EmployeeService {
         employee.setName(employeeDto.getName());
         employee.setEmail(employeeDto.getEmail());
         employee.setCity(employeeDto.getCity());
+        String filename = employeeDto.getResume().getOriginalFilename();
+        String fileExtension = getFileExtension(filename);
+        employee.setFileName(filename);
+        employee.setExtension(fileExtension);
         try {
             employee.setResume(employeeDto.getResume().getBytes());
             return employeeRepository.save(employee);
@@ -38,5 +43,15 @@ public class EmployeeService {
         PageRequest pageRequest = PageRequest.of(pageNumber-1, pageSize);
         Page<Employee> pageEmp = employeeRepository.findAll(pageRequest);
         return pageEmp.getContent();
+    }
+
+    private String getFileExtension(String filename) {
+        if (StringUtils.hasText(filename)) {
+            int dotIndex = filename.lastIndexOf('.');
+            if (dotIndex >= 0 && dotIndex < filename.length() - 1) {
+                return filename.substring(dotIndex + 1);
+            }
+        }
+        return null;
     }
 }

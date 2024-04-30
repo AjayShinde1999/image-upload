@@ -46,6 +46,12 @@
             <artifactId>springfox-swagger-ui</artifactId>
             <version>3.0.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.tika</groupId>
+            <artifactId>tika-core</artifactId>
+            <version>1.27</version> <!-- Use the latest version available -->
+        </dependency>
+
     </dependencies>
 
     <build>

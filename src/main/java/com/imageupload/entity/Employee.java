@@ -16,4 +16,6 @@ public class Employee {
     private String city;
     @Lob
     private byte[] resume;
+    private String extension;
+    private String fileName;
 }

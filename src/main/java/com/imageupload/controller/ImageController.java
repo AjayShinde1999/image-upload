@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StreamUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -33,12 +34,25 @@ public class ImageController {
 
         try {
             byte[] imageData = file.getBytes();
-            imageService.saveImage(imageData);
+            String extension = getFileExtension(file.getOriginalFilename());
+
+            // Save image data and extension
+            imageService.saveImage(imageData, extension);
             return new ResponseEntity<>("File uploaded successfully", HttpStatus.OK);
         } catch (IOException e) {
             e.printStackTrace();
             return new ResponseEntity<>("Failed to upload file", HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    private String getFileExtension(String filename) {
+        if (StringUtils.hasText(filename)) {
+            int dotIndex = filename.lastIndexOf('.');
+            if (dotIndex >= 0 && dotIndex < filename.length() - 1) {
+                return filename.substring(dotIndex + 1);
+            }
+        }
+        return null;
     }
 
     @GetMapping(value = "/image/{id}")
@@ -50,10 +64,10 @@ public class ImageController {
 //            return ResponseEntity.ok().contentType(mediaType).body(image.getImage());
 
             byte[] fileBytes = image.getImage(); // Assuming this is the byte array representing the Excel file
-
+            String extension = image.getExtension();
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-            headers.setContentDispositionFormData("attachment", "filename.zip"); // Change "filename.xlsx" to your desired file name
+            headers.setContentDispositionFormData("attachment", "filename."+extension); // Change "filename.xlsx" to your desired file name
 
             return new ResponseEntity<>(fileBytes, headers, HttpStatus.OK);
 

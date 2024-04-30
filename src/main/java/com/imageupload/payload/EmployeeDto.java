@@ -11,4 +11,6 @@ public class EmployeeDto {
     private String email;
     private String city;
     private MultipartFile resume;
+    private String extension;
+    private String fileName;
 }
