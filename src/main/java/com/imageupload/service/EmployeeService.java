@@ -4,6 +4,7 @@ import com.imageupload.entity.Employee;
 import com.imageupload.payload.DeleteResponse;
 import com.imageupload.payload.EmployeeDto;
 import com.imageupload.repository.EmployeeRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Slf4j
 public class EmployeeService {
 
     private EmployeeRepository employeeRepository;
@@ -29,7 +31,7 @@ public class EmployeeService {
         String filename = employeeDto.getResume().getOriginalFilename();
         String fileExtension = getFileExtension(filename);
         employee.setFileName(filename);
-        System.out.println(filename);
+        log.info("file name {}",filename);
         employee.setExtension(fileExtension);
         try {
             employee.setResume(employeeDto.getResume().getBytes());
@@ -40,7 +42,12 @@ public class EmployeeService {
     }
 
     public Employee getEmployeeById(long id) {
-        return employeeRepository.findById(id).get();
+
+        Optional<Employee> optionalEmployee = employeeRepository.findById(id);
+        if (optionalEmployee.isPresent()) {
+            return optionalEmployee.get();
+        }
+        throw new IllegalArgumentException("Employee not found with id " + id);
     }
 
     public List<Employee> getAllEmployees(int pageNumber, int pageSize) {
@@ -50,10 +57,8 @@ public class EmployeeService {
     }
 
     private String getFileExtension(String filename) {
-
         int dotIndex = filename.lastIndexOf('.');
         return filename.substring(dotIndex + 1);
-
 //        if (StringUtils.hasText(filename)) {
 //            int dotIndex = filename.lastIndexOf('.');
 //            if (dotIndex >= 0 && dotIndex < filename.length() - 1) {
@@ -82,12 +87,12 @@ public class EmployeeService {
                 employee.setFileName(employeeDto.getResume().getOriginalFilename());
                 String fileExtension = getFileExtension(employeeDto.getResume().getOriginalFilename());
                 employee.setExtension(fileExtension);
-               return employeeRepository.save(employee);
+                return employeeRepository.save(employee);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
 
         }
-        throw new RuntimeException("Employee not found with id " + id);
+        throw new IllegalArgumentException("Employee not found with id " + id);
     }
 }
