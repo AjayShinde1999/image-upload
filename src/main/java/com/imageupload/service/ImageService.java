@@ -9,16 +9,17 @@ import java.util.Optional;
 @Service
 public class ImageService {
 
-    @Autowired
     private ImageRepository imageRepository;
 
-    public void saveImage(byte[] imageData,String extension) {
+    public ImageService(ImageRepository imageRepository) {
+        this.imageRepository = imageRepository;
+    }
+
+    public void saveImage(byte[] imageData, String extension) {
         Image image = new Image();
         image.setImage(imageData);
         image.setExtension(extension);
         System.out.println(extension);
-        // You might want to extract and store the format of the image as well
-        // image.setFormat(getImageFormat(imageData));
         imageRepository.save(image);
     }
 
