@@ -31,7 +31,7 @@ public class EmployeeService {
         String filename = employeeDto.getResume().getOriginalFilename();
         String fileExtension = getFileExtension(filename);
         employee.setFileName(filename);
-        log.info("file name {}",filename);
+        log.info("file name {}", filename);
         employee.setExtension(fileExtension);
         try {
             employee.setResume(employeeDto.getResume().getBytes());
@@ -59,6 +59,9 @@ public class EmployeeService {
     private String getFileExtension(String filename) {
         int dotIndex = filename.lastIndexOf('.');
         return filename.substring(dotIndex + 1);
+
+
+
 //        if (StringUtils.hasText(filename)) {
 //            int dotIndex = filename.lastIndexOf('.');
 //            if (dotIndex >= 0 && dotIndex < filename.length() - 1) {

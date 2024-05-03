@@ -2,7 +2,6 @@ package com.imageupload.service;
 
 import com.imageupload.entity.Image;
 import com.imageupload.repository.ImageRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.Optional;
 

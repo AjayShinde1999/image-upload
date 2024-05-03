@@ -37,7 +37,7 @@ public class EmployeeController {
 
     @GetMapping
     public ResponseEntity<List<Employee>> getAllEmployees(@RequestParam(defaultValue = "1", required = false) int pageNumber,
-                                                          @RequestParam(defaultValue = "10", required = false) int pageSize) {
+                                                          @RequestParam(defaultValue = "100", required = false) int pageSize) {
         List<Employee> allEmployees = employeeService.getAllEmployees(pageNumber, pageSize);
         return ResponseEntity.ok(allEmployees);
     }
